@@ -16,6 +16,9 @@ dependencies {
     // OpenFeign for Inter-service Communication
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
