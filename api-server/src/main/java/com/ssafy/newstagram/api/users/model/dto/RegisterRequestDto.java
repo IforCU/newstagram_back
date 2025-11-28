@@ -2,8 +2,8 @@ package com.ssafy.newstagram.api.users.model.dto;
 
 
 import com.ssafy.newstagram.api.users.validation.ValidPassword;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public class RegisterRequestDto {
 
-    @Email(message = "올바른 이메일 형식이 아닙니다.")
+    @Pattern(
+            regexp = "^[\\w.-]+@[\\w-]+\\.[a-zA-Z]{2,6}$",
+            message = "올바른 이메일 형식이 아닙니다."
+    )
     @NotBlank
     private String email;
 
