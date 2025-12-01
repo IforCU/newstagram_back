@@ -12,8 +12,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInteractionLogsDto {
-    private String id;
-    private String interaction_type;
+    private Long id;
+    @Builder.Default
+    private String interaction_type = "CLICK";
     private LocalDateTime created_at;
     private String session_id;
     private String user_agent;

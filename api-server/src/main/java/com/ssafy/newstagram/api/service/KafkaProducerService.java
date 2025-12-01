@@ -1,8 +1,10 @@
 package com.ssafy.newstagram.api.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class KafkaProducerService {
     private final KafkaTemplate<Object, Object> kafkaTemplate;
@@ -12,15 +14,13 @@ public class KafkaProducerService {
     }
 
     public void sendMessage(String topic, String message) {
-        try {
-            kafkaTemplate.send(topic, message).get();
-        } catch(Exception e) {
-            System.err.println("============== [Kafka 전송 ERROR] ==============");
-            System.err.println("발생 서버: api-server");
-            System.err.println("토픽: " + topic);
-            System.err.println("메시지: " + message);
-            System.err.println("=====================================");
-            e.printStackTrace();
-        }
+        /**
+         * Aspect에서 sendMessage 호출 시 지정된 토픽에 메시지 전송
+         * 콜백 함수 사용하여 비동기 처리
+         */
+        kafkaTemplate.send(topic, message).whenComplete((result, ex) -> {
+            if(ex == null) log.info("Kafka 전송 성공 - topic: {}", topic);
+            else log.error("[Kafka 전송 실패] 서버: api-server, 토픽: {}, 메시지: {}", topic, message, ex);
+        });
     }
 }
