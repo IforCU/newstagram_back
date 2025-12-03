@@ -1,5 +1,6 @@
 package com.ssafy.newstagram.api.config;
 
+import com.ssafy.newstagram.api.auth.jwt.JWTFilter;
 import com.ssafy.newstagram.api.auth.jwt.JWTUtil;
 import com.ssafy.newstagram.api.auth.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,9 @@ public class SecurityConfig {
 
         AuthenticationManager authManager = authenticationManager();
 
+        // JWTFilter 생성
+        JWTFilter jwtFilter = new JWTFilter(jwtUtil);
+
         // LoginFilter 생성 + URL 설정
         LoginFilter loginFilter = new LoginFilter(authManager, jwtUtil);
         loginFilter.setFilterProcessesUrl("/auth/login"); // 로그인 URL
@@ -51,6 +55,7 @@ public class SecurityConfig {
                 .frameOptions(frame -> frame.sameOrigin())  // H2 Console 등을 위해
             );
 
+        http.addFilterBefore(jwtFilter, LoginFilter.class);
         http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
