@@ -1,6 +1,7 @@
 package com.ssafy.newstagram.api.config;
 
 import com.ssafy.newstagram.api.auth.jwt.LoginFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,18 +14,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
-        this.authenticationConfiguration = authenticationConfiguration;
-    }
-
-
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
@@ -34,6 +31,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        AuthenticationManager authManager = authenticationManager();
+
+        // LoginFilter 생성 + URL 설정
+        LoginFilter loginFilter = new LoginFilter(authManager);
+        loginFilter.setFilterProcessesUrl("/auth/login"); // 로그인 URL
+
         http
             .authorizeHttpRequests(auth -> auth
 //                .requestMatchers("/", "/signup", "/login").permitAll()
@@ -45,7 +49,7 @@ public class SecurityConfig {
                 .frameOptions(frame -> frame.sameOrigin())  // H2 Console 등을 위해
             );
 
-        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
     }
