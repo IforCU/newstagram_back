@@ -7,4 +7,5 @@ import com.ssafy.newstagram.api.users.model.dto.RegisterRequestDto;
 public interface UserService {
     void register(RegisterRequestDto user);
     LoginResponseDto login(LoginRequestDto user);
+    void deleteUserByEmail(String email);
 }

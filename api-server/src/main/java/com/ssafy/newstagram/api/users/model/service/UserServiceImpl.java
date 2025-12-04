@@ -42,4 +42,15 @@ public class UserServiceImpl implements  UserService{
     public LoginResponseDto login(LoginRequestDto dto) {
         return null;
     }
+
+    @Override
+    public void deleteUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if(user == null){
+            throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
+        }
+
+        userRepository.delete(user); // soft delete
+    }
 }
