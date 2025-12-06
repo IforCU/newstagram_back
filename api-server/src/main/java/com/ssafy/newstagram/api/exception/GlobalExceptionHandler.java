@@ -12,6 +12,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<BaseResponse<?>> handleIllegalArgument(IllegalArgumentException e) {
+        log.error("IllegalArgumentException 발생: {}", e.getMessage(), e);
+
+        ErrorDetail errorDetail = ErrorDetail.builder()
+                .type("VALIDATION_ERROR")
+                .message(e.getMessage())
+                .build();
+
+        return ResponseEntity
+                .badRequest()
+                .body(BaseResponse.error("USER_400", e.getMessage(), errorDetail));
+    }
+
+
     // 모든 예외를 잡는 가장 상위 핸들러
     @ExceptionHandler(Exception.class)
     public ResponseEntity<BaseResponse<?>> handleException(Exception e) {
