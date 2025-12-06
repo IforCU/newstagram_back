@@ -2,6 +2,8 @@ package com.ssafy.newstagram.api.auth.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.newstagram.api.auth.model.dto.LoginRequestDto;
+import com.ssafy.newstagram.api.auth.model.dto.LoginResponseDto;
+import com.ssafy.newstagram.api.common.BaseResponse;
 import com.ssafy.newstagram.api.users.model.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -63,7 +65,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String token = jwtUtil.createJwt(email, role);
 
-        response.addHeader("Authorization", "Bearer " + token);
+        BaseResponse<LoginResponseDto> res = BaseResponse.success(
+                "AUTH_200",
+                "로그인 성공",
+                new LoginResponseDto(token, null)
+        );
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(res);
+
+        response.setContentType("application/json; charset=UTF-8");
+        response.getWriter().write(json);
     }
 
     @Override
