@@ -21,7 +21,7 @@ public class UserServiceImpl implements  UserService{
     public void register(RegisterRequestDto dto) {
 
         // 이메일 중복 체크
-        if(userRepository.existsByEmail(dto.getEmail())){
+        if(userRepository.existsByEmailIncludeDeleted(dto.getEmail())){
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
