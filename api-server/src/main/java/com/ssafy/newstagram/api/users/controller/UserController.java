@@ -1,8 +1,9 @@
 package com.ssafy.newstagram.api.users.controller;
 
+import com.ssafy.newstagram.api.common.BaseResponse;
+import com.ssafy.newstagram.api.users.model.dto.CustomUserDetails;
 import com.ssafy.newstagram.api.users.model.dto.RegisterRequestDto;
 import com.ssafy.newstagram.api.users.model.service.UserService;
-import com.ssafy.newstagram.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -11,6 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,15 +24,34 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/email")
     @Operation(summary = "일반 회원가입", description = "이메일 기반으로 일반 회원가입을 요청한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "회원가입 성공 - 사용자 생성됨"),
             @ApiResponse(responseCode = "400", description = "회원가입 실패 - 잘못된 요청 데이터 형식"),
     })
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequestDto dto) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDto dto) {
         userService.register(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                BaseResponse.successNoData("USER_201", "회원가입 성공")
+        );
     }
 
+    @DeleteMapping("/me")
+    @Operation(summary = "회원탈퇴")
+    public ResponseEntity<?> deleteMyAccount(){
+
+        // 현재 사용자의 인증 정보에서 email 가져오기
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        String email = userDetails.getUsername();
+
+//        System.out.println("[" + email + "] 회원 탈퇴 요청");
+
+        userService.deleteUserByEmail(email);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                BaseResponse.successNoData("USER_200", "회원탈퇴 완료")
+        );
+    }
 }

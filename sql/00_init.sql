@@ -18,7 +18,8 @@ CREATE TABLE users (
     refresh_token TEXT,
     preference_embedding vector(1536), -- 사용자의 선호도 벡터 (이동 평균)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE --ALTER TABLE users ADD COLUMN deleted BOOLEAN NOT NULL DEFAULT FALSE;
 );
 
 -- 2. 뉴스 카테고리: 뉴스 분류를 위한 표준 카테고리

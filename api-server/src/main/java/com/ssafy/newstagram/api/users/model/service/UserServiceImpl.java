@@ -1,6 +1,8 @@
 package com.ssafy.newstagram.api.users.model.service;
 
 
+import com.ssafy.newstagram.api.auth.model.dto.LoginRequestDto;
+import com.ssafy.newstagram.api.auth.model.dto.LoginResponseDto;
 import com.ssafy.newstagram.api.users.model.dto.RegisterRequestDto;
 import com.ssafy.newstagram.api.users.repository.UserRepository;
 import com.ssafy.newstagram.domain.user.entity.User;
@@ -19,7 +21,7 @@ public class UserServiceImpl implements  UserService{
     public void register(RegisterRequestDto dto) {
 
         // 이메일 중복 체크
-        if(userRepository.existsByEmail(dto.getEmail())){
+        if(userRepository.existsByEmailIncludeDeleted(dto.getEmail())){
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
@@ -34,5 +36,21 @@ public class UserServiceImpl implements  UserService{
                 .build();
 
         userRepository.save(user);
+    }
+
+    @Override
+    public LoginResponseDto login(LoginRequestDto dto) {
+        return null;
+    }
+
+    @Override
+    public void deleteUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if(user == null){
+            throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
+        }
+
+        userRepository.delete(user); // soft delete
     }
 }
