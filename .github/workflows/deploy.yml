@@ -104,6 +104,8 @@ jobs:
               -e KAFKA_BOOTSTRAP_SERVERS="${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}" \
               -e KAFKA_API_KEY="${{ secrets.KAFKA_API_KEY }}" \
               -e KAFKA_API_SECRET="${{ secrets.KAFKA_API_SECRET }}" \
+              -e GMS_SECRET="${{ secrets.GMS_SECRET }}" \
+              -e GMS_BASE_URL="${{ secrets.GMS_BASE_URL }}" \
               ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_RSS }}:latest
 
   # 3. CD: API Server 배포
@@ -169,6 +171,8 @@ jobs:
               -e KAFKA_API_KEY="${{ secrets.KAFKA_API_KEY }}" \
               -e KAFKA_API_SECRET="${{ secrets.KAFKA_API_SECRET }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              -e GMS_SECRET="${{ secrets.GMS_SECRET }}" \
+              -e GMS_BASE_URL="${{ secrets.GMS_BASE_URL }}" \
               ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_API }}:latest
 
   # 4. CD: Logging Server 배포
@@ -233,4 +237,6 @@ jobs:
               -e KAFKA_BOOTSTRAP_SERVERS="${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}" \
               -e KAFKA_API_KEY="${{ secrets.KAFKA_API_KEY }}" \
               -e KAFKA_API_SECRET="${{ secrets.KAFKA_API_SECRET }}" \
+              -e GMS_SECRET="${{ secrets.GMS_SECRET }}" \
+              -e GMS_BASE_URL="${{ secrets.GMS_BASE_URL }}" \
               ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_LOG }}:latest
