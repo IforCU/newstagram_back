@@ -34,7 +34,7 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String email, String role) {
+    public String createAccessToken(String email, String role) {
         return Jwts.builder()
                 .claim("email", email)
                 .claim("role", role)

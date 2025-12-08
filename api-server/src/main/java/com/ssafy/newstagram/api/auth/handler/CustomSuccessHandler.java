@@ -36,7 +36,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(email, role);
+        String token = jwtUtil.createAccessToken(email, role);
 
         BaseResponse<LoginResponseDto> res = BaseResponse.success(
                 "AUTH_200",

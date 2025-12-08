@@ -64,7 +64,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(email, role);
+        String token = jwtUtil.createAccessToken(email, role);
 
         BaseResponse<LoginResponseDto> res = BaseResponse.success(
                 "AUTH_200",
