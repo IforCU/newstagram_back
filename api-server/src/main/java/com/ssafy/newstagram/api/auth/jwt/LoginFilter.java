@@ -70,7 +70,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String accessToken = jwtUtil.createAccessToken(email, role);
         String refreshToken = jwtUtil.createRefreshToken(email);
 
-        refreshTokenService.saveRefreshToken(email, refreshToken);
+        refreshTokenService.issue(email, refreshToken);
 
         BaseResponse<LoginResponseDto> res = BaseResponse.success(
                 "AUTH_200",

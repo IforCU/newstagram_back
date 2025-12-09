@@ -64,7 +64,7 @@ public class AuthController {
         String newAccessToken = jwtUtil.createAccessToken(email, user.getRole());
         String newRefreshToken = jwtUtil.createRefreshToken(email);
 
-        refreshTokenService.saveRefreshToken(email, newRefreshToken);
+        refreshTokenService.issue(email, newRefreshToken);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.success(
@@ -83,7 +83,7 @@ public class AuthController {
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         String email = userDetails.getUsername();
 
-        refreshTokenService.deleteRefreshToken(email);
+        refreshTokenService.delete(email);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.successNoData(
