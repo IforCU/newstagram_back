@@ -13,14 +13,14 @@ public class RefreshTokenService {
     @Value("${jwt.refresh-expiration}")
     private long REFRESH_TOKEN_TTL;
 
-    public void issue(String email, String refreshToken){
-        refreshTokenUtil.save(email, refreshToken, REFRESH_TOKEN_TTL);
+    public void save(Long userId, String refreshToken){
+        refreshTokenUtil.save(userId, refreshToken, REFRESH_TOKEN_TTL);
     }
-    public String getRefreshToken(String email){
-        return refreshTokenUtil.getRefreshToken(email);
+    public String getRefreshToken(Long userId){
+        return refreshTokenUtil.getRefreshToken(userId);
     }
 
-    public void delete(String email){
-        refreshTokenUtil.delete(email);
+    public void delete(Long userId){
+        refreshTokenUtil.delete(userId);
     }
 }

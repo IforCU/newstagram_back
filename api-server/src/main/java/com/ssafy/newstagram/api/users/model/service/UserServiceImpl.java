@@ -1,8 +1,5 @@
 package com.ssafy.newstagram.api.users.model.service;
 
-
-import com.ssafy.newstagram.api.auth.model.dto.LoginRequestDto;
-import com.ssafy.newstagram.api.auth.model.dto.LoginResponseDto;
 import com.ssafy.newstagram.api.users.model.dto.RegisterRequestDto;
 import com.ssafy.newstagram.api.users.model.dto.UpdateNicknameRequestDto;
 import com.ssafy.newstagram.api.users.model.dto.UpdatePasswordRequestDto;
@@ -90,6 +87,13 @@ public class UserServiceImpl implements  UserService{
         }
 
         return user;
+    }
+
+    @Override
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+            () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
+        );
     }
 
     @Transactional

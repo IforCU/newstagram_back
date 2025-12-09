@@ -14,5 +14,6 @@ public interface UserService {
     UserInfoDto getUserInfoByEmail(String email);
     void updateNickname(String email, UpdateNicknameRequestDto dto);
     User getUserByEmail(String email);
+    User getUserById(Long userId);
     void updatePassword(String email, UpdatePasswordRequestDto dto);
 }
