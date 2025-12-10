@@ -4,6 +4,7 @@ import com.ssafy.newstagram.rss.vo.Article;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -24,4 +25,6 @@ public interface ArticleMapper {
     // 문자열 literal을 그대로 Article 객체의 embedding 필드에 매핑할 때 사용
     List<Article> findAllWithEmbeddingLiteral();
 
+    List<Article> findArticlesByPeriod(@Param("startPeriod") LocalDateTime startPeriod,
+                                       @Param("endPeriod") LocalDateTime endPeriod);
 }
