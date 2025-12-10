@@ -3,10 +3,10 @@ package com.ssafy.newstagram.api.auth.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.newstagram.api.auth.model.dto.LoginRequestDto;
 import com.ssafy.newstagram.api.auth.model.dto.LoginResponseDto;
+import com.ssafy.newstagram.api.auth.model.service.RefreshTokenService;
 import com.ssafy.newstagram.api.common.BaseResponse;
 import com.ssafy.newstagram.api.common.ErrorDetail;
 import com.ssafy.newstagram.api.users.model.dto.CustomUserDetails;
-import com.ssafy.newstagram.api.users.model.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,12 +26,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
-    private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, UserService userService) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -58,8 +58,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("login success");
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authResult.getPrincipal();
-
-        String email = customUserDetails.getUsername();
+        Long userId = customUserDetails.getUserId();
 
         Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -67,10 +66,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String accessToken = jwtUtil.createAccessToken(email, role);
-        String refreshToken = jwtUtil.createRefreshToken(email);
+        String accessToken = jwtUtil.createAccessToken(userId, role);
+        String refreshToken = jwtUtil.createRefreshToken(userId);
 
-        userService.updateRefreshToken(email, refreshToken);
+        refreshTokenService.save(userId, refreshToken);
 
         BaseResponse<LoginResponseDto> res = BaseResponse.success(
                 "AUTH_200",
