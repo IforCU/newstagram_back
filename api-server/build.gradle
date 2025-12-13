@@ -40,6 +40,9 @@ dependencies {
 
     // Lombok
     implementation 'org.projectlombok:lombok:1.18.42'
+
+    // Mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 bootJar {
