@@ -30,4 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByLoginTypeAndProviderId(String loginType, String providerId);
 
+    @Query(value = "SELECT u.id FROM users u WHERE u.phone_number = :phone_number", nativeQuery = true)
+    Optional<Long> findIdByPhoneNumber(@Param("phone_number") String phoneNumber);
+
 }
