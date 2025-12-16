@@ -90,6 +90,10 @@ public class VerificationCodeServiceImpl implements VerificationCodeService{
     public void requestPhoneVerificationCode(PhoneVerificationRequestDto dto, long expirationMs) {
         String phoneNumber = dto.getPhoneNumber();
 
+        if(userRepository.existsByPhoneNumberIncludedDeleted(phoneNumber)){
+            throw new IllegalArgumentException("이미 가입된 번호입니다.");
+        }
+
         String key = generatePhoneVerificationKey(phoneNumber);
         String code = generateCode();
         redisTemplate.opsForHash().put(key, "code", code);
