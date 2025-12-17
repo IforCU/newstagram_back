@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class HotIssueArticleDto {
 
     private Long articleId;
-    private int rankInGroup;   // 클러스터 내 순위
+    private Integer rankInGroup;   // 클러스터 내 순위
 }
