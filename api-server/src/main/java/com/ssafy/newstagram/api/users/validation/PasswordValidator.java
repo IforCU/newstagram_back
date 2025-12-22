@@ -11,6 +11,10 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
             return false;
         }
 
+        if (!password.matches("^[a-zA-Z0-9!@#$%]*$")) {
+            return false;
+        }
+
         boolean hasLetter = password.matches(".*[a-zA-Z].*");
         boolean hasDigit = password.matches(".*[0-9].*");
         boolean hasSpecial = password.matches(".*[!@#$%].*"); // !,@,#,$,% 만 허용
@@ -20,6 +24,6 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
         if (hasDigit) count++;
         if (hasSpecial) count++;
 
-        return count >= 2;
+        return count >= 2 && password.length() >= 8;
     }
 }
