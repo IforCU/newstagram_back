@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class SearchService {
 
     private final ArticleRepository articleRepository;
@@ -60,7 +59,6 @@ public class SearchService {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
 
-    @Transactional
     public List<ArticleDto> searchArticles(Long userId, String query, int limit, int page) {
         // 1. Save Search History (Only for the first page)
         if (page == 0) {
@@ -97,7 +95,7 @@ public class SearchService {
                 ? intent.getQuery() 
                 : query;
         
-        List<Double> embedding = callEmbeddingApi(searchKeywords);
+        List<Double> embedding = self.getCachedEmbedding(searchKeywords);
         String embeddingString = toPgVectorLiteral(embedding); 
 
         Long categoryId = null;
@@ -277,7 +275,8 @@ public class SearchService {
         return "[" + inner + "]";
     }
 
-    private List<Double> callEmbeddingApi(String inputText) {
+    @Cacheable(value = "keyword_embedding", key = "#inputText")
+    public List<Double> getCachedEmbedding(String inputText) {
         if (inputText == null || inputText.isBlank()) {
             throw new IllegalArgumentException("Embedding input text must not be empty");
         }
@@ -366,6 +365,7 @@ public class SearchService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public List<ArticleDto> getRecommendedArticles(Long userId, int page, int limit) {
         // Use native query to fetch embedding as string to avoid Hibernate mapping issues
         String embeddingStr = userRepository.findPreferenceEmbeddingAsString(userId);
@@ -387,6 +387,7 @@ public class SearchService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<SearchHistoryDto> getSearchHistory(Long userId) {
         return userSearchHistoryRepository.findHistoryNative(userId).stream()
                 .map(history -> new SearchHistoryDto(history.getId(), history.getQuery()))
