@@ -27,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -58,16 +59,17 @@ public class SearchService {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
 
+    @Transactional(readOnly = true)
     public List<ArticleDto> searchArticles(Long userId, String query, int limit, int page) {
         // 1. Save Search History (Only for the first page)
         if (page == 0) {
-            saveSearchHistory(userId, query);
+            self.saveSearchHistory(userId, query);
         }
 
         // 2. Perform Search (Cached)
         // Authenticated search uses strict threshold (0.8) to limit results to relevant ones
         // Use 'self' to invoke via proxy for caching
-        return self.getCachedSearchResults(query, limit, page, 0.80);
+        return self.getCachedSearchResults(query, limit, page, 0.40);
     }
 
     @Cacheable(value = "search_results", key = "#query + '-' + #page + '-' + #limit + '-' + #threshold")
@@ -349,8 +351,8 @@ public class SearchService {
         return body.getData().get(0).getEmbedding();
     }
 
-    @Transactional
-    private void saveSearchHistory(Long userId, String query) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void saveSearchHistory(Long userId, String query) {
         try {
             // 1. Try to update existing history timestamp to move it to top
             int updated = userSearchHistoryRepository.updateCreatedAtByUserIdAndQuery(userId, query);
