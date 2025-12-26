@@ -34,9 +34,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     List<Article> findByCategory_IdOrderByPublishedAtDesc(Long categoryId, Pageable pageable);
 
-    @Query(value = "SELECT id, title, content, description, url, thumbnail_url, author, published_at, created_at, updated_at, feed_id, category_id, sources_id, NULL as embedding FROM articles ORDER BY embedding <=> cast(:embedding as vector) LIMIT :limit", nativeQuery = true)
-    List<Article> findByEmbeddingSimilarity(@Param("embedding") String embedding, @Param("limit") int limit);
-
     @Query(value = "SELECT id, title, content, description, url, thumbnail_url, author, published_at, created_at, updated_at, feed_id, category_id, sources_id, NULL as embedding " +
             "FROM articles " +
             "WHERE (:categoryId IS NULL OR category_id = :categoryId) " +
@@ -63,7 +60,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             @Param("limit") int limit,
             @Param("startDate") LocalDateTime startDate
     );
-
+    
     @Query(value = "SELECT id, title, content, description, url, thumbnail_url, author, published_at, created_at, updated_at, feed_id, category_id, sources_id, NULL as embedding " +
             "FROM articles " +
             "WHERE (:categoryIds IS NULL OR category_id IN (:categoryIds)) " +
